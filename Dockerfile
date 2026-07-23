@@ -1,6 +1,5 @@
-FROM eclipse-temurin:21-jdk-jammy
-RUN apt-get update && apt-get install -y tomcat10
-RUN rm -rf /var/lib/tomcat10/webapps/ROOT/*
-COPY ROOT.war /var/lib/tomcat10/webapps/ROOT.war
+FROM tomcat:10.1-jdk21
+RUN rm -rf /usr/local/tomcat/webapps/*
+COPY ROOT.war /usr/local/tomcat/webapps/ROOT.war
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
