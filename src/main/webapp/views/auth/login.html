@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CtrlPlusSubmit — Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Animated gradient background for the brand panel */
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%;   }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%;   }
+    }
+    .animated-gradient {
+      background: linear-gradient(-45deg, #6366f1, #8b5cf6, #ec4899, #3b82f6);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+    }
+
+    /* Floating shapes decoration */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px);   }
+      50%       { transform: translateY(-18px); }
+    }
+    .float-shape { animation: float 5s ease-in-out infinite; }
+    .float-shape-delay { animation: float 5s ease-in-out 1.5s infinite; }
+
+    /* Input focus ring */
+    .input-field:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    /* Toast notification */
+    #toast {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    #toast.hidden-toast {
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-50 font-sans">
+
+  <!-- ============================================================
+       MAIN CARD — Split layout
+  ============================================================ -->
+  <div class="w-full max-w-4xl mx-4 flex rounded-2xl shadow-2xl overflow-hidden min-h-[540px]">
+
+    <!-- ===== LEFT PANEL — Brand / Illustration ===== -->
+    <div class="animated-gradient hidden md:flex md:w-1/2 flex-col items-center justify-center p-10 relative overflow-hidden">
+
+      <!-- Floating decorative shapes -->
+      <div class="float-shape absolute top-10 left-8 w-16 h-16 rounded-full bg-white opacity-10"></div>
+      <div class="float-shape-delay absolute bottom-16 right-8 w-24 h-24 rounded-full bg-white opacity-10"></div>
+      <div class="float-shape absolute top-1/2 right-6 w-10 h-10 rounded-full bg-white opacity-10"></div>
+
+      <!-- Logo / Icon -->
+      <div class="w-20 h-20 rounded-2xl bg-white bg-opacity-20 flex items-center justify-center mb-6 shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+               M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2
+               m-6 9l2 2 4-4"/>
+        </svg>
+      </div>
+
+      <!-- App Name -->
+      <h1 class="text-white text-3xl font-bold tracking-wide mb-2">CtrlPlusSubmit</h1>
+      <p class="text-white text-opacity-80 text-center text-sm leading-relaxed max-w-xs">
+        Assign, submit, and review tasks — all in one place for students, faculty, and admins.
+      </p>
+
+      <!-- Feature badges -->
+      <div class="mt-8 flex flex-col gap-3 w-full max-w-xs">
+        <div class="flex items-center gap-3 bg-white bg-opacity-15 rounded-xl px-4 py-2">
+          <span class="text-white text-lg">📋</span>
+          <span class="text-white text-sm">Smart task assignment</span>
+        </div>
+        <div class="flex items-center gap-3 bg-white bg-opacity-15 rounded-xl px-4 py-2">
+          <span class="text-white text-lg">📁</span>
+          <span class="text-white text-sm">File upload &amp; review</span>
+        </div>
+        <div class="flex items-center gap-3 bg-white bg-opacity-15 rounded-xl px-4 py-2">
+          <span class="text-white text-lg">🔔</span>
+          <span class="text-white text-sm">Deadline notifications</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RIGHT PANEL — Login Form ===== -->
+    <div class="w-full md:w-1/2 bg-white flex flex-col justify-center px-8 py-10">
+
+      <!-- Toast notification (logout success / errors) -->
+      <div id="toast" class="hidden-toast mb-4 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2"></div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Welcome back 👋</h2>
+        <p class="text-gray-500 text-sm mt-1">Sign in to your CtrlPlusSubmit account</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" novalidate>
+
+        <!-- Email field -->
+        <div class="mb-5">
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+            Email address
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12
+                     a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+              </svg>
+            </span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              class="input-field w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl
+                     text-sm text-gray-800 bg-gray-50 transition-all duration-200"
+            />
+          </div>
+          <p id="emailError" class="text-red-500 text-xs mt-1 hidden">Please enter a valid email.</p>
+        </div>
+
+        <!-- Password field -->
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-1">
+            <label for="password" class="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+          </div>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                   viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6
+                     a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+            </span>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              class="input-field w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl
+                     text-sm text-gray-800 bg-gray-50 transition-all duration-200"
+            />
+            <!-- Toggle password visibility -->
+            <button type="button" id="togglePassword"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400
+                           hover:text-gray-600 transition-colors">
+              <svg id="eyeIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                     -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+          <p id="passwordError" class="text-red-500 text-xs mt-1 hidden">
+            Please enter your password.
+          </p>
+        </div>
+
+        <!-- Submit button -->
+        <button
+          type="submit"
+          id="loginBtn"
+          class="w-full py-2.5 px-4 rounded-xl text-white text-sm font-semibold
+                 bg-gradient-to-r from-indigo-500 to-purple-600
+                 hover:from-indigo-600 hover:to-purple-700
+                 active:scale-95 transition-all duration-200 shadow-md
+                 flex items-center justify-center gap-2 disabled:opacity-60
+                 disabled:cursor-not-allowed"
+        >
+          <span id="btnText">Sign in</span>
+          <!-- Loading spinner (hidden by default) -->
+          <svg id="btnSpinner" class="hidden animate-spin w-4 h-4 text-white"
+               xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="flex items-center my-6">
+        <div class="flex-1 border-t border-gray-100"></div>
+        <span class="px-3 text-xs text-gray-400">New to CtrlPlusSubmit?</span>
+        <div class="flex-1 border-t border-gray-100"></div>
+      </div>
+
+      <!-- Request account link -->
+      <a href="request-account.html"
+         class="w-full py-2.5 px-4 rounded-xl text-indigo-600 text-sm font-semibold
+                border-2 border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50
+                text-center transition-all duration-200 block">
+        Request an Account
+      </a>
+
+      <!-- Footer note -->
+      <p class="text-center text-xs text-gray-400 mt-6">
+        Admin-approved access only &bull; Powered by CtrlPlusSubmit
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       JAVASCRIPT — login logic via Fetch API
+  ============================================================ -->
+  <script>
+    // -------------------------------------------------------
+    //  Toast helper
+    // -------------------------------------------------------
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const isSuccess = type === 'success';
+      toast.className = `mb-4 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2
+        ${isSuccess
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'}`;
+      toast.innerHTML = `
+        <span>${isSuccess ? '✅' : '❌'}</span>
+        <span>${message}</span>`;
+      // Make visible
+      toast.style.opacity    = '1';
+      toast.style.transform  = 'translateY(0)';
+      toast.style.pointerEvents = 'auto';
+
+      // Auto-hide after 4 seconds for success
+      if (isSuccess) {
+        setTimeout(() => {
+          toast.style.opacity   = '0';
+          toast.style.transform = 'translateY(-12px)';
+        }, 4000);
+      }
+    }
+
+    // -------------------------------------------------------
+    //  On page load — check for ?logout=true query param
+    // -------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('logout') === 'true') {
+        showToast('You have been logged out successfully.', 'success');
+        // Clean URL (remove query param without reload)
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    });
+
+    // -------------------------------------------------------
+    //  Toggle password visibility
+    // -------------------------------------------------------
+    document.getElementById('togglePassword').addEventListener('click', () => {
+      const pwd     = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+      const isHidden = pwd.type === 'password';
+
+      pwd.type = isHidden ? 'text' : 'password';
+      eyeIcon.innerHTML = isHidden
+        ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+             d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7
+                a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878
+                l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59
+                m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0
+                01-4.132 5.411m0 0L21 21"/>`
+        : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+    });
+
+    // -------------------------------------------------------
+    //  Form submission via Fetch API
+    // -------------------------------------------------------
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Clear previous errors
+      document.getElementById('emailError').classList.add('hidden');
+      document.getElementById('passwordError').classList.add('hidden');
+
+      // Client-side validation
+      let valid = true;
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('emailError').classList.remove('hidden');
+        valid = false;
+      }
+      if (!password) {
+        document.getElementById('passwordError').classList.remove('hidden');
+        valid = false;
+      }
+      if (!valid) return;
+
+      // Show loading state
+      const btn     = document.getElementById('loginBtn');
+      const btnText = document.getElementById('btnText');
+      const spinner = document.getElementById('btnSpinner');
+      btn.disabled  = true;
+      btnText.textContent = 'Signing in...';
+      spinner.classList.remove('hidden');
+
+      try {
+        // Build form-encoded body (servlet reads via request.getParameter)
+        const body = new URLSearchParams({ email, password });
+
+        const response = await fetch('/CtrlPlusSubmit/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString()
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showToast('Login successful! Redirecting...', 'success');
+          // Redirect to role-based dashboard
+          setTimeout(() => {
+            window.location.href = result.data.redirectUrl;
+          }, 800);
+        } else {
+          showToast(result.message || 'Login failed. Please try again.', 'error');
+          // Shake the form on error
+          document.getElementById('loginForm').classList.add('animate-pulse');
+          setTimeout(() =>
+            document.getElementById('loginForm').classList.remove('animate-pulse'), 600);
+        }
+
+      } catch (err) {
+        showToast('Network error. Please check your connection.', 'error');
+        console.error('[Login] Fetch error:', err);
+      } finally {
+        // Restore button state
+        btn.disabled = false;
+        btnText.textContent = 'Sign in';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    // -------------------------------------------------------
+    //  Enter key triggers login
+    // -------------------------------------------------------
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>

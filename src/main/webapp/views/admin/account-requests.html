@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CtrlPlusSubmit — Account Requests</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    .sidebar-gradient { background:linear-gradient(160deg,#4f46e5,#7c3aed,#9333ea);background-size:200% 200%;animation:gradientShift 8s ease infinite; }
+    .nav-link { transition:all .2s ease; }
+    .nav-link:hover,.nav-link.active { background:rgba(255,255,255,.18);border-radius:10px; }
+    .modal-overlay { background:rgba(0,0,0,0.45); }
+    .input-field:focus { outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+    .toast-enter { animation:toastIn .3s ease; }
+    @keyframes toastIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar-gradient w-64 min-h-screen flex flex-col fixed left-0 top-0 z-30 shadow-xl">
+    <div class="px-6 py-6 border-b border-white border-opacity-20">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <div><p class="text-white font-bold text-base leading-tight">CtrlPlusSubmit</p><p class="text-purple-200 text-xs">Admin Panel</p></div>
+      </div>
+    </div>
+    <nav class="flex-1 px-4 py-5 space-y-1">
+      <p class="text-purple-300 text-xs font-semibold uppercase tracking-wider px-3 mb-3">Menu</p>
+      <a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-purple-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</a>
+      <a href="users.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-purple-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>User Management</a>
+      <a href="batches.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-purple-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Batches</a>
+      <a href="account-requests.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 text-white text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>Account Requests</a>
+    </nav>
+    <div class="px-4 py-5 border-t border-white border-opacity-20">
+      <a href="/CtrlPlusSubmit/auth/logout" class="flex items-center gap-3 px-3 py-2.5 text-purple-200 text-sm font-medium rounded-xl hover:bg-white hover:bg-opacity-15 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="ml-64 flex-1 p-8">
+    <div id="toast" class="hidden fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 toast-enter"></div>
+
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Account Requests</h1>
+        <p class="text-gray-500 text-sm mt-0.5">Review and approve or reject access requests</p>
+      </div>
+      <!-- Filter tabs -->
+      <div class="flex gap-2 bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
+        <button onclick="filterRequests('all')" id="tab_all"
+                class="tab-btn px-4 py-1.5 rounded-lg text-sm font-semibold bg-indigo-500 text-white transition-all">
+          All
+        </button>
+        <button onclick="filterRequests('PENDING')" id="tab_PENDING"
+                class="tab-btn px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-50 transition-all">
+          Pending
+        </button>
+        <button onclick="filterRequests('APPROVED')" id="tab_APPROVED"
+                class="tab-btn px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-50 transition-all">
+          Approved
+        </button>
+        <button onclick="filterRequests('REJECTED')" id="tab_REJECTED"
+                class="tab-btn px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-50 transition-all">
+          Rejected
+        </button>
+      </div>
+    </div>
+
+    <!-- Requests Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-100">
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Requester</th>
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Requested Role</th>
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Message</th>
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Status</th>
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Date</th>
+              <th class="text-right px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="requestsTableBody">
+            <tr><td colspan="6" class="text-center py-10 text-gray-400">Loading requests...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== APPROVE MODAL ===== -->
+  <div id="approveModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-gray-800">Approve Request</h3>
+        <button onclick="closeModal('approveModal')" class="text-gray-400 hover:text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>
+
+      <!-- Requester info card -->
+      <div class="bg-indigo-50 rounded-xl p-4 mb-5 border border-indigo-100">
+        <p class="text-xs font-semibold text-indigo-500 uppercase tracking-wider mb-1">Approving access for</p>
+        <p class="font-bold text-indigo-900 text-sm" id="approve_name"></p>
+        <p class="text-indigo-600 text-xs" id="approve_email"></p>
+        <span class="inline-block mt-2 px-2 py-0.5 bg-indigo-200 text-indigo-800 text-xs font-semibold rounded-lg" id="approve_role"></span>
+      </div>
+
+      <input type="hidden" id="approve_requestId"/>
+      <div class="mb-5">
+        <label class="block text-xs font-semibold text-gray-600 mb-1">
+          Set Temporary Password <span class="text-red-400">*</span>
+        </label>
+        <input type="text" id="approve_tempPwd" placeholder="e.g. Welcome@123"
+               class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+        <p class="text-xs text-gray-400 mt-1">Share this with the user so they can log in for the first time.</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="closeModal('approveModal')" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium hover:bg-gray-50">Cancel</button>
+        <button onclick="approveRequest()"
+                class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500
+                       text-white text-sm font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Approve & Create Account
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REJECT CONFIRM MODAL ===== -->
+  <div id="rejectModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+      <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </div>
+      <h3 class="text-lg font-bold text-gray-800 mb-2">Reject Request?</h3>
+      <p class="text-gray-500 text-sm mb-1">You are about to reject the request from:</p>
+      <p class="font-semibold text-gray-700 text-sm mb-5" id="reject_name"></p>
+      <input type="hidden" id="reject_requestId"/>
+      <div class="flex gap-3">
+        <button onclick="closeModal('rejectModal')" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium hover:bg-gray-50">Cancel</button>
+        <button onclick="rejectRequest()"
+                class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all">
+          Yes, Reject
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allRequests = [];
+    let currentFilter = 'all';
+
+    function toast(msg, type='success') {
+      const el = document.getElementById('toast');
+      el.className = `fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 toast-enter ${type==='success'?'bg-green-500 text-white':'bg-red-500 text-white'}`;
+      el.innerHTML = `<span>${type==='success'?'✓':'✕'}</span><span>${msg}</span>`;
+      el.classList.remove('hidden');
+      setTimeout(()=>el.classList.add('hidden'), 4000);
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ---- Load requests ----
+    async function loadRequests() {
+      const res  = await fetch('/CtrlPlusSubmit/admin/approve');
+      const json = await res.json();
+      if (!json.success) { window.location.href='/CtrlPlusSubmit/views/auth/login.html'; return; }
+      allRequests = json.data;
+      renderTable(allRequests);
+    }
+
+    function filterRequests(status) {
+      currentFilter = status;
+      // Update tab styles
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-50 transition-all';
+      });
+      const activeTab = document.getElementById('tab_' + status);
+      if (activeTab) activeTab.className = 'tab-btn px-4 py-1.5 rounded-lg text-sm font-semibold bg-indigo-500 text-white transition-all';
+
+      const filtered = status === 'all' ? allRequests : allRequests.filter(r => r.status === status);
+      renderTable(filtered);
+    }
+
+    function renderTable(requests) {
+      const tbody = document.getElementById('requestsTableBody');
+      if (!requests.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400">No requests found.</td></tr>`;
+        return;
+      }
+
+      const statusStyle = {
+        PENDING:  'bg-amber-100 text-amber-700',
+        APPROVED: 'bg-emerald-100 text-emerald-700',
+        REJECTED: 'bg-red-100 text-red-600'
+      };
+      const roleStyle = { STUDENT:'bg-green-100 text-green-700', FACULTY:'bg-blue-100 text-blue-700' };
+
+      tbody.innerHTML = requests.map(r => `
+        <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-rose-500
+                          flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                ${r.fullName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p class="font-semibold text-gray-800 text-sm">${esc(r.fullName)}</p>
+                <p class="text-gray-400 text-xs">${esc(r.email)}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-4">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold ${roleStyle[r.requestedRole]||'bg-gray-100 text-gray-600'}">
+              ${r.requestedRole}
+            </span>
+          </td>
+          <td class="px-5 py-4 max-w-xs">
+            <p class="text-gray-500 text-xs truncate">${esc(r.message || '—')}</p>
+          </td>
+          <td class="px-5 py-4">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold ${statusStyle[r.status]||'bg-gray-100 text-gray-600'}">
+              ${r.status}
+            </span>
+          </td>
+          <td class="px-5 py-4 text-gray-500 text-xs">${formatDate(r.requestedAt)}</td>
+          <td class="px-5 py-4">
+            <div class="flex items-center justify-end gap-2">
+              ${r.status === 'PENDING' ? `
+                <button onclick='openApproveModal(${JSON.stringify(r)})'
+                        class="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs
+                               font-semibold rounded-lg hover:bg-emerald-100 transition-colors">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  Approve
+                </button>
+                <button onclick='openRejectModal(${JSON.stringify(r)})'
+                        class="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-500 text-xs
+                               font-semibold rounded-lg hover:bg-red-100 transition-colors">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  Reject
+                </button>
+              ` : `<span class="text-xs text-gray-400 italic">No actions</span>`}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ---- Open Approve Modal ----
+    function openApproveModal(req) {
+      document.getElementById('approve_requestId').value = req.id;
+      document.getElementById('approve_name').textContent  = req.fullName;
+      document.getElementById('approve_email').textContent = req.email;
+      document.getElementById('approve_role').textContent  = req.requestedRole;
+      document.getElementById('approve_tempPwd').value     = '';
+      document.getElementById('approveModal').classList.remove('hidden');
+    }
+
+    // ---- Approve ----
+    async function approveRequest() {
+      const requestId   = document.getElementById('approve_requestId').value;
+      const tempPassword = document.getElementById('approve_tempPwd').value.trim();
+      if (!tempPassword) { toast('Please set a temporary password.','error'); return; }
+
+      const body = new URLSearchParams({ action:'approve', requestId, tempPassword });
+      const res  = await fetch('/CtrlPlusSubmit/admin/approve', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+      const json = await res.json();
+      json.success ? (closeModal('approveModal'), toast(json.message), loadRequests()) : toast(json.message,'error');
+    }
+
+    // ---- Open Reject Modal ----
+    function openRejectModal(req) {
+      document.getElementById('reject_requestId').value = req.id;
+      document.getElementById('reject_name').textContent = req.fullName + ' (' + req.email + ')';
+      document.getElementById('rejectModal').classList.remove('hidden');
+    }
+
+    // ---- Reject ----
+    async function rejectRequest() {
+      const requestId = document.getElementById('reject_requestId').value;
+      const body = new URLSearchParams({ action:'reject', requestId });
+      const res  = await fetch('/CtrlPlusSubmit/admin/approve', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+      const json = await res.json();
+      json.success ? (closeModal('rejectModal'), toast(json.message), loadRequests()) : toast(json.message,'error');
+    }
+
+    function esc(s) { return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function formatDate(iso) { if(!iso)return'—'; try{return new Date(iso).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch{return iso;} }
+
+    loadRequests();
+  </script>
+</body>
+</html>

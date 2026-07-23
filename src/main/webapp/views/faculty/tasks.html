@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CtrlPlusSubmit — My Tasks</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .sidebar-gradient{background:linear-gradient(160deg,#0f766e,#0d9488,#06b6d4);background-size:200% 200%;animation:gradientShift 8s ease infinite}
+    .nav-link{transition:all .2s}.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.18);border-radius:10px}
+    .modal-overlay{background:rgba(0,0,0,0.5)}
+    .input-field:focus{outline:none;border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+    .toast-enter{animation:toastIn .3s ease}
+    @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+    .card-hover{transition:transform .2s,box-shadow .2s}.card-hover:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.1)}
+
+    /* Step indicator */
+    .step-dot { transition: all .3s ease; }
+    .step-line { transition: background .3s ease; }
+
+    /* Assignment type radio cards */
+    .type-card input[type="radio"] { display: none; }
+    .type-card input[type="radio"]:checked + label {
+      border-color: #0d9488;
+      background: #f0fdfa;
+      box-shadow: 0 0 0 3px rgba(13,148,136,.15);
+    }
+    .type-card label { cursor: pointer; transition: all .2s ease; }
+    .type-card label:hover { border-color: #0d9488; }
+
+    /* Student checkbox list */
+    .student-checkbox input[type="checkbox"]:checked + label {
+      background: #f0fdfa;
+      border-color: #0d9488;
+    }
+    .student-checkbox label { cursor: pointer; transition: all .15s ease; }
+
+    /* Select all checkbox */
+    #selectAllStudents:checked { accent-color: #0d9488; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar-gradient w-64 min-h-screen flex flex-col fixed left-0 top-0 z-30 shadow-xl">
+    <div class="px-6 py-6 border-b border-white border-opacity-20">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white bg-opacity-20 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg></div>
+        <div><p class="text-white font-bold text-base leading-tight">CtrlPlusSubmit</p><p class="text-teal-200 text-xs">Faculty Panel</p></div>
+      </div>
+    </div>
+    <nav class="flex-1 px-4 py-5 space-y-1">
+      <p class="text-teal-300 text-xs font-semibold uppercase tracking-wider px-3 mb-3">Menu</p>
+      <a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-teal-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</a>
+      <a href="tasks.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 text-white text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Tasks</a>
+      <a href="submissions.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-teal-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Submissions</a>
+    </nav>
+    <div class="px-4 py-5 border-t border-white border-opacity-20"><a href="/CtrlPlusSubmit/auth/logout" class="flex items-center gap-3 px-3 py-2.5 text-teal-200 text-sm font-medium rounded-xl hover:bg-white hover:bg-opacity-15 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Logout</a></div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="ml-64 flex-1 p-8">
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 toast-enter"></div>
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">My Tasks</h1>
+        <p class="text-gray-500 text-sm mt-0.5">Create and manage your assignments</p>
+      </div>
+      <button onclick="openCreateModal()"
+              class="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-500 to-cyan-500
+                     text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-all shadow-md active:scale-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        New Task
+      </button>
+    </div>
+    <!-- Task Grid -->
+      <div id="taskGrid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div class="col-span-full text-center py-16 text-gray-400">Loading tasks...</div>
+    </div>
+  </main>
+
+  <!-- ================================================================
+       TASK MODAL — 2-step: Task Details → Assignment
+  ================================================================ -->
+  <div id="taskModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[92vh] flex flex-col">
+
+      <!-- Modal header (sticky) -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+        <div>
+          <h3 class="text-base font-bold text-gray-800" id="modalHeading">Create New Task</h3>
+          <p class="text-xs text-gray-400 mt-0.5" id="modalSubheading">Fill in the task details</p>
+        </div>
+        <button onclick="closeModal()" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="flex items-center gap-0 px-6 py-3 border-b border-gray-50 flex-shrink-0">
+        <!-- Step 1 -->
+        <div class="flex items-center gap-2">
+          <div id="dot1" class="step-dot w-7 h-7 rounded-full bg-teal-500 text-white text-xs font-bold flex items-center justify-center">1</div>
+          <span id="label1" class="text-xs font-semibold text-teal-600">Task Details</span>
+        </div>
+        <!-- Line -->
+        <div class="flex-1 mx-3 h-0.5 bg-gray-200 rounded step-line" id="stepLine"></div>
+        <!-- Step 2 -->
+        <div class="flex items-center gap-2">
+          <div id="dot2" class="step-dot w-7 h-7 rounded-full bg-gray-200 text-gray-400 text-xs font-bold flex items-center justify-center">2</div>
+          <span id="label2" class="text-xs font-semibold text-gray-400">Assignment</span>
+        </div>
+      </div>
+
+      <!-- Scrollable body -->
+      <div class="flex-1 overflow-y-auto px-6 py-5">
+
+        <!-- ══════════ STEP 1: TASK DETAILS ══════════ -->
+        <div id="step1">
+          <div class="space-y-4">
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">
+                Task Title <span class="text-red-400">*</span>
+              </label>
+              <input type="text" id="f_title" placeholder="e.g. Build a REST API using Spring Boot"
+                     class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">Description</label>
+              <textarea id="f_description" rows="3" placeholder="Detailed instructions for students..."
+                        class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 resize-none"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">
+                  Deadline <span class="text-red-400">*</span>
+                </label>
+                <input type="datetime-local" id="f_deadline"
+                       class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Max Marks</label>
+                <input type="number" id="f_maxMarks" value="100" min="1" max="1000"
+                       class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+              </div>
+            </div>
+
+            <!-- File upload zone -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">Attach Instruction File</label>
+              <div class="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-teal-400 transition-colors cursor-pointer"
+                   onclick="document.getElementById('f_attachFile').click()">
+                <svg class="w-6 h-6 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                <p class="text-xs text-gray-400" id="attachLabel">Click to upload PDF, DOC, ZIP (max 20 MB)</p>
+                <input type="file" id="f_attachFile" class="hidden"
+                       accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.zip"
+                       onchange="document.getElementById('attachLabel').textContent = this.files[0]?.name || 'Click to upload'"/>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Step 1 footer -->
+          <div class="flex gap-3 mt-6">
+            <button onclick="closeModal()"
+                    class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium hover:bg-gray-50">
+              Cancel
+            </button>
+            <button onclick="goToStep2()"
+                    class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500
+                           text-white text-sm font-semibold hover:opacity-90 transition-all
+                           flex items-center justify-center gap-2">
+              Next — Choose Assignment
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ══════════ STEP 2: ASSIGNMENT ══════════ -->
+        <div id="step2" class="hidden">
+
+          <!-- Assignment type selection -->
+          <p class="text-xs font-semibold text-gray-600 mb-3">
+            Who should receive this task? <span class="text-red-400">*</span>
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 mb-5">
+
+            <!-- Individual Student -->
+            <div class="type-card">
+              <input type="radio" id="typeIndividual" name="assignType" value="INDIVIDUAL"
+       onchange="onTypeChange('INDIVIDUAL')"/>
+              <label for="typeIndividual"
+                     class="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl text-center">
+                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+                <span class="text-sm font-bold text-gray-700">Individual Student</span>
+                <span class="text-xs text-gray-400 leading-tight">Pick one or more students from a batch</span>
+              </label>
+            </div>
+
+            <!-- Whole Batch -->
+            <div class="type-card">
+              <input type="radio" id="typeBatch" name="assignType" value="BATCH"
+                     onchange="onTypeChange('BATCH')"/>
+              <label for="typeBatch"
+                     class="flex flex-col items-center gap-2 p-4 border-2 border-gray-200 rounded-xl text-center">
+                <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857
+                         M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857
+                         m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                </div>
+                <span class="text-sm font-bold text-gray-700">Whole Batch</span>
+                <span class="text-xs text-gray-400 leading-tight">Assign to all students in a batch</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- ── BATCH DROPDOWN (shown for both types) ──── -->
+          <div id="batchPickerSection" class="hidden mb-4">
+            <label class="block text-xs font-semibold text-gray-600 mb-1">
+              Select Batch <span class="text-red-400">*</span>
+            </label>
+            <select id="batchSelect"
+                    class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"
+                    onchange="onBatchChange()">
+              <option value="">— Choose a batch —</option>
+            </select>
+
+            <!-- Batch meta pill — shows student count after selection -->
+            <div id="batchMeta" class="hidden mt-2 flex items-center gap-2">
+              <span class="px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-lg" id="batchMetaText"></span>
+            </div>
+          </div>
+
+          <!-- ── STUDENT LIST (Individual mode only) ────── -->
+          <div id="studentPickerSection" class="hidden">
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-semibold text-gray-600">
+                Select Students <span class="text-red-400">*</span>
+              </label>
+              <label class="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer">
+                <input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll(this.checked)"
+                       class="rounded accent-teal-500"/>
+                Select all
+              </label>
+            </div>
+
+            <!-- Loading skeleton -->
+            <div id="studentLoadingState" class="hidden space-y-2 mb-3">
+              <div class="h-10 bg-gray-100 rounded-xl animate-pulse"></div>
+              <div class="h-10 bg-gray-100 rounded-xl animate-pulse"></div>
+              <div class="h-10 bg-gray-100 rounded-xl animate-pulse"></div>
+            </div>
+
+            <!-- Empty state -->
+            <div id="studentEmptyState" class="hidden bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
+              <p class="text-amber-700 text-xs font-semibold">No students enrolled in this batch yet.</p>
+              <p class="text-amber-500 text-xs mt-1">Ask the admin to enroll students first.</p>
+            </div>
+
+            <!-- Student list -->
+            <div id="studentList"
+                 class="max-h-52 overflow-y-auto space-y-1.5 pr-1 rounded-xl
+                        border border-gray-100 p-2 bg-gray-50/50">
+              <!-- Populated dynamically -->
+            </div>
+
+            <!-- Selected count pill -->
+            <p class="text-xs text-gray-400 mt-2" id="selectedCount">0 students selected</p>
+          </div>
+
+          <!-- Error message area -->
+          <div id="step2Error" class="hidden mt-3 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-xs text-red-600 font-medium flex items-center gap-2">
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span id="step2ErrorMsg"></span>
+          </div>
+
+          <!-- Step 2 footer -->
+          <div class="flex gap-3 mt-6">
+            <button onclick="goToStep1()"
+                    class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200
+                           text-sm text-gray-600 font-medium hover:bg-gray-50 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>
+              Back
+            </button>
+            <button onclick="submitTask()" id="submitBtn"
+                    class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500
+                           text-white text-sm font-semibold hover:opacity-90 transition-all
+                           flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span id="submitBtnText">Create &amp; Assign Task</span>
+              <svg id="submitSpinner" class="hidden animate-spin w-4 h-4 text-white"
+                   xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       DELETE MODAL
+  ================================================================ -->
+  <div id="deleteModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+      <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </div>
+      <h3 class="text-lg font-bold text-gray-800 mb-2">Delete Task?</h3>
+      <p class="text-gray-500 text-sm mb-5">This will hide the task from students. Existing submissions are preserved.</p>
+      <input type="hidden" id="delete_taskId"/>
+      <div class="flex gap-3">
+        <button onclick="document.getElementById('deleteModal').classList.add('hidden')" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium hover:bg-gray-50">Cancel</button>
+        <button onclick="confirmDelete()" class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── State ─────────────────────────────────────────────
+    let batchesCache = [];
+    let currentStep  = 1;
+    let editTaskId   = null;   // null = create mode, number = edit mode
+
+    // ── Helpers ───────────────────────────────────────────
+    function esc(s) {
+      return (s || '').replace(/[&<>"']/g,
+        c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      try {
+        const d = new Date(iso);
+        return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) +
+               ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      } catch { return iso; }
+    }
+    function toast(msg, type = 'success') {
+      const el = document.getElementById('toast');
+      el.className = `fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 toast-enter
+        ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+      el.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3500);
+    }
+    function showStep2Error(msg) {
+      document.getElementById('step2Error').classList.remove('hidden');
+      document.getElementById('step2ErrorMsg').textContent = msg;
+    }
+    function hideStep2Error() {
+      document.getElementById('step2Error').classList.add('hidden');
+    }
+
+    // ── STEP NAVIGATION ──────────────────────────────────
+    function goToStep2() {
+      // Validate step 1
+      const title    = document.getElementById('f_title').value.trim();
+      const deadline = document.getElementById('f_deadline').value;
+      if (!title)    { toast('Task title is required.', 'error'); return; }
+      if (!deadline) { toast('Please set a deadline.', 'error');  return; }
+      if (new Date(deadline) <= new Date()) {
+        toast('Deadline must be in the future.', 'error'); return;
+      }
+
+      currentStep = 2;
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+
+      // Step indicator: step 1 done, step 2 active
+      document.getElementById('dot1').className  = 'step-dot w-7 h-7 rounded-full bg-teal-100 text-teal-600 text-xs font-bold flex items-center justify-center';
+      document.getElementById('dot1').innerHTML  = '✓';
+      document.getElementById('label1').className= 'text-xs font-semibold text-teal-500';
+      document.getElementById('dot2').className  = 'step-dot w-7 h-7 rounded-full bg-teal-500 text-white text-xs font-bold flex items-center justify-center';
+      document.getElementById('dot2').textContent= '2';
+      document.getElementById('label2').className= 'text-xs font-semibold text-teal-600';
+      document.getElementById('stepLine').style.background = '#0d9488';
+      document.getElementById('modalSubheading').textContent = 'Choose who receives this task';
+    }
+
+    function goToStep1() {
+      currentStep = 1;
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
+      // Reset step indicator
+      document.getElementById('dot1').className  = 'step-dot w-7 h-7 rounded-full bg-teal-500 text-white text-xs font-bold flex items-center justify-center';
+      document.getElementById('dot1').textContent= '1';
+      document.getElementById('label1').className= 'text-xs font-semibold text-teal-600';
+      document.getElementById('dot2').className  = 'step-dot w-7 h-7 rounded-full bg-gray-200 text-gray-400 text-xs font-bold flex items-center justify-center';
+      document.getElementById('dot2').textContent= '2';
+      document.getElementById('label2').className= 'text-xs font-semibold text-gray-400';
+      document.getElementById('stepLine').style.background = '';
+      document.getElementById('modalSubheading').textContent = 'Fill in the task details';
+    }
+
+    // ── ASSIGNMENT TYPE CHANGE ────────────────────────────
+    function onTypeChange(type) {
+  hideStep2Error();
+  const batchSection   = document.getElementById('batchPickerSection');
+  const studentSection = document.getElementById('studentPickerSection');
+
+  batchSection.classList.remove('hidden');
+
+  // BUG FIX: was type === 'INDIVIDUAL' which never matched 'STUDENT' from the radio.
+  // Now both sides use 'INDIVIDUAL' consistently.
+  if (type === 'INDIVIDUAL') {
+    document.getElementById('batchSelect').value = '';
+    document.getElementById('batchMeta').classList.add('hidden');
+    studentSection.classList.remove('hidden');
+    clearStudentList();
+  } else {
+    studentSection.classList.add('hidden');
+    document.getElementById('batchSelect').value = '';
+    document.getElementById('batchMeta').classList.add('hidden');
+  }
+}
+
+    // ── BATCH SELECTION CHANGE ────────────────────────────
+    async function onBatchChange() {
+      hideStep2Error();
+      const batchId   = document.getElementById('batchSelect').value;
+      const type      = document.querySelector('input[name="assignType"]:checked')?.value;
+      const metaDiv   = document.getElementById('batchMeta');
+      const metaText  = document.getElementById('batchMetaText');
+
+      if (!batchId) {
+        metaDiv.classList.add('hidden');
+        if (type === 'INDIVIDUAL') clearStudentList();
+        return;
+      }
+
+      // Show batch student count
+      const batch = batchesCache.find(b => b.id == batchId);
+      if (batch) {
+        metaText.textContent = `${batch.studentCount ?? 0} student${batch.studentCount !== 1 ? 's' : ''} enrolled`;
+        metaDiv.classList.remove('hidden');
+      }
+
+      // Load student list for Individual mode
+      if (type === 'INDIVIDUAL') {
+        await loadStudents(batchId);
+      }
+    }
+
+    // ── LOAD STUDENTS FOR SELECTED BATCH ─────────────────
+    async function loadStudents(batchId) {
+      const listEl    = document.getElementById('studentList');
+      const loadingEl = document.getElementById('studentLoadingState');
+      const emptyEl   = document.getElementById('studentEmptyState');
+      const countEl   = document.getElementById('selectedCount');
+
+      // Show skeleton
+      listEl.innerHTML = '';
+      listEl.classList.add('hidden');
+      emptyEl.classList.add('hidden');
+      loadingEl.classList.remove('hidden');
+
+      try {
+        const res  = await fetch(`/CtrlPlusSubmit/faculty/tasks?action=studentsByBatch&batchId=${batchId}`);
+        const json = await res.json();
+        loadingEl.classList.add('hidden');
+
+        if (!json.success || !json.data?.length) {
+          emptyEl.classList.remove('hidden');
+          countEl.textContent = '0 students available';
+          return;
+        }
+
+        listEl.classList.remove('hidden');
+        document.getElementById('selectAllStudents').checked = false;
+        countEl.textContent = '0 students selected';
+
+        listEl.innerHTML = json.data.map(s => `
+          <div class="student-checkbox">
+            <input type="checkbox" id="student_${s.id}" value="${s.id}"
+                   class="sr-only student-cb"
+                   onchange="updateSelectedCount()"/>
+            <label for="student_${s.id}"
+                   class="flex items-center gap-3 px-3 py-2.5 border-2 border-gray-100 rounded-xl
+                          hover:border-teal-300 transition-all block">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500
+                          flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                ${esc(s.fullName?.charAt(0)?.toUpperCase() ?? '?')}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">${esc(s.fullName)}</p>
+                <p class="text-xs text-gray-400 truncate">${esc(s.email)}</p>
+              </div>
+              <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center
+                          flex-shrink-0 check-indicator">
+                <svg class="w-3 h-3 text-teal-500 hidden check-icon" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </label>
+          </div>
+        `).join('');
+
+        // Show/hide check icon on check
+        document.querySelectorAll('.student-cb').forEach(cb => {
+          cb.addEventListener('change', function () {
+            const icon = this.parentElement.querySelector('.check-icon');
+            const ring = this.parentElement.querySelector('.check-indicator');
+            if (this.checked) {
+              icon?.classList.remove('hidden');
+              ring?.classList.add('border-teal-500', 'bg-teal-50');
+            } else {
+              icon?.classList.add('hidden');
+              ring?.classList.remove('border-teal-500', 'bg-teal-50');
+            }
+          });
+        });
+
+      } catch (e) {
+        loadingEl.classList.add('hidden');
+        listEl.classList.remove('hidden');
+        listEl.innerHTML = `<p class="text-xs text-red-400 text-center py-4">Failed to load students. Please try again.</p>`;
+      }
+    }
+
+    function clearStudentList() {
+      document.getElementById('studentList').innerHTML = '';
+      document.getElementById('studentList').classList.remove('hidden');
+      document.getElementById('studentLoadingState').classList.add('hidden');
+      document.getElementById('studentEmptyState').classList.add('hidden');
+      document.getElementById('selectedCount').textContent = '0 students selected';
+      document.getElementById('selectAllStudents').checked = false;
+    }
+
+    function updateSelectedCount() {
+      const count = document.querySelectorAll('.student-cb:checked').length;
+      document.getElementById('selectedCount').textContent =
+        count + ' student' + (count !== 1 ? 's' : '') + ' selected';
+    }
+
+    function toggleSelectAll(checked) {
+      document.querySelectorAll('.student-cb').forEach(cb => {
+        cb.checked = checked;
+        cb.dispatchEvent(new Event('change'));
+      });
+    }
+
+    // ── SUBMIT TASK (create + assign) ─────────────────────
+    async function submitTask() {
+      hideStep2Error();
+
+      const type    = document.querySelector('input[name="assignType"]:checked')?.value;
+      const batchId = document.getElementById('batchSelect').value;
+
+      // Validate assignment selection
+      if (!type) {
+        showStep2Error('Please select an assignment type (Individual Student or Whole Batch).');
+        return;
+      }
+      if (!batchId) {
+        showStep2Error('Please select a batch.');
+        return;
+      }
+
+      // Collect student IDs for Individual mode
+      let studentIds = [];
+      if (type === 'INDIVIDUAL') {
+        document.querySelectorAll('.student-cb:checked').forEach(cb => {
+          studentIds.push(cb.value);
+        });
+        if (!studentIds.length) {
+          showStep2Error('Please select at least one student.');
+          return;
+        }
+      }
+
+      // Loading state
+      const btn     = document.getElementById('submitBtn');
+      const btnText = document.getElementById('submitBtnText');
+      const spinner = document.getElementById('submitSpinner');
+      btn.disabled  = true;
+      btnText.textContent = 'Creating task...';
+      spinner.classList.remove('hidden');
+
+      try {
+        // ── Step A: Create the task (multipart) ──────────
+        const formData = new FormData();
+        formData.append('title',       document.getElementById('f_title').value.trim());
+        formData.append('description', document.getElementById('f_description').value.trim());
+        formData.append('deadline',    document.getElementById('f_deadline').value);
+        formData.append('maxMarks',    document.getElementById('f_maxMarks').value);
+        const file = document.getElementById('f_attachFile').files[0];
+        if (file) formData.append('attachFile', file);
+
+        const createRes  = await fetch('/CtrlPlusSubmit/faculty/tasks', { method: 'POST', body: formData });
+        const createJson = await createRes.json();
+
+        if (!createJson.success) {
+          showStep2Error(createJson.message || 'Task creation failed.');
+          return;
+        }
+
+        const taskId = createJson.data?.id;
+        if (!taskId) {
+          showStep2Error('Task created but ID not returned. Please assign manually.');
+          return;
+        }
+
+        // ── Step B: Assign the task ───────────────────────
+        btnText.textContent = 'Assigning...';
+
+        const assignBody = new URLSearchParams({ action: 'assign', taskId, assignType: type });
+
+        if (type === 'BATCH') {
+          assignBody.append('targetId', batchId);
+        } else {
+          assignBody.append('studentIds', studentIds.join(','));
+        }
+
+        const assignRes  = await fetch('/CtrlPlusSubmit/faculty/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: assignBody
+        });
+        const assignJson = await assignRes.json();
+
+        // Success — even if assign partially failed, task was created
+        closeModal();
+        toast(
+          assignJson.success
+            ? `Task created and assigned! ${assignJson.message}`
+            : `Task created but assignment had issues: ${assignJson.message}`,
+          assignJson.success ? 'success' : 'error'
+        );
+        loadTasks();
+
+      } catch (e) {
+        showStep2Error('Network error. Please check your connection and try again.');
+        console.error('[TaskSubmit]', e);
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Create & Assign Task';
+        spinner.classList.add('hidden');
+      }
+    }
+
+    // ── MODAL OPEN / CLOSE ────────────────────────────────
+    async function openCreateModal() {
+      editTaskId = null;
+      // Reset all fields
+      document.getElementById('f_title').value       = '';
+      document.getElementById('f_description').value = '';
+      document.getElementById('f_deadline').value    = '';
+      document.getElementById('f_maxMarks').value    = 100;
+      document.getElementById('f_attachFile').value  = '';
+      document.getElementById('attachLabel').textContent = 'Click to upload PDF, DOC, ZIP (max 20 MB)';
+      document.querySelectorAll('input[name="assignType"]').forEach(r => r.checked = false);
+      document.getElementById('batchPickerSection').classList.add('hidden');
+      document.getElementById('studentPickerSection').classList.add('hidden');
+      document.getElementById('batchMeta').classList.add('hidden');
+      clearStudentList();
+      hideStep2Error();
+
+      // Pre-load batches into dropdown
+      await loadBatchDropdown();
+
+      // Always start at step 1
+      goToStep1();
+      document.getElementById('modalHeading').textContent = 'Create New Task';
+      document.getElementById('taskModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('taskModal').classList.add('hidden');
+      goToStep1();
+    }
+
+    // ── LOAD BATCH DROPDOWN ───────────────────────────────
+    async function loadBatchDropdown() {
+      const res  = await fetch('/CtrlPlusSubmit/faculty/tasks?action=batches');
+      const json = await res.json();
+      batchesCache = json.data || [];
+
+      const sel = document.getElementById('batchSelect');
+      sel.innerHTML = '<option value="">— Choose a batch —</option>';
+      batchesCache.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value       = b.id;
+        opt.textContent = `${b.batchName} (${b.studentCount ?? 0} students)`;
+        sel.appendChild(opt);
+      });
+    }
+
+    // ── LOAD ALL TASKS (task cards) ───────────────────────
+    async function loadTasks() {
+      const res  = await fetch('/CtrlPlusSubmit/faculty/tasks');
+      const json = await res.json();
+      if (!json.success) { window.location.href = '/CtrlPlusSubmit/views/auth/login.html'; return; }
+      renderGrid(json.data || []);
+    }
+
+    const deadlineColor = { UPCOMING: 'bg-blue-400', TODAY: 'bg-amber-400', OVERDUE: 'bg-red-400' };
+
+    function renderGrid(tasks) {
+      const grid = document.getElementById('taskGrid');
+      if (!tasks.length) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400">
+          No tasks yet — click <strong>New Task</strong> to create your first one.
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = tasks.map(t => `
+        <div class="card-hover bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="h-1.5 ${deadlineColor[t.deadlineStatus] || 'bg-gray-300'}"></div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-2">
+              <h3 class="font-bold text-gray-800 text-sm leading-snug pr-2 line-clamp-2">${esc(t.title)}</h3>
+              <span class="px-2 py-0.5 rounded-lg text-xs font-semibold flex-shrink-0
+                ${t.deadlineStatus === 'OVERDUE' ? 'bg-red-100 text-red-600'
+                  : t.deadlineStatus === 'TODAY'  ? 'bg-amber-100 text-amber-700'
+                  : 'bg-blue-50 text-blue-600'}">
+                ${t.deadlineStatus || '—'}
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 mb-3 line-clamp-2">${esc(t.description || 'No description provided.')}</p>
+
+            <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 mb-4">
+              <span>📅 ${fmtDate(t.deadline)}</span>
+              <span>🏅 ${t.maxMarks} marks</span>
+              ${t.attachFileName ? `<span>📎 ${esc(t.attachFileName)}</span>` : ''}
+            </div>
+
+            <!-- Mini stats row -->
+            <div class="flex gap-2 mb-4">
+              <div class="flex-1 bg-gray-50 rounded-lg px-2 py-2 text-center">
+                <p class="text-base font-bold text-gray-700">${t.totalAssigned ?? 0}</p>
+                <p class="text-xs text-gray-400">Assigned</p>
+              </div>
+              <div class="flex-1 bg-gray-50 rounded-lg px-2 py-2 text-center">
+                <p class="text-base font-bold text-teal-600">${t.totalSubmitted ?? 0}</p>
+                <p class="text-xs text-gray-400">Submitted</p>
+              </div>
+              <div class="flex-1 bg-gray-50 rounded-lg px-2 py-2 text-center">
+                <p class="text-base font-bold text-amber-600">${t.pendingReview ?? 0}</p>
+                <p class="text-xs text-gray-400">To Review</p>
+              </div>
+            </div>
+
+            <!-- Action row -->
+            <div class="flex gap-2">
+              <a href="submissions.html?taskId=${t.id}"
+                 class="flex-1 py-2 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-xl hover:bg-indigo-100 transition-colors text-center">
+                Reviews
+              </a>
+              <button onclick="openDeleteModal(${t.id})"
+                      class="p-2 bg-red-50 text-red-400 rounded-xl hover:bg-red-100 transition-colors" title="Delete">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── DELETE ────────────────────────────────────────────
+    function openDeleteModal(taskId) {
+      document.getElementById('delete_taskId').value = taskId;
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+
+    async function confirmDelete() {
+      const taskId = document.getElementById('delete_taskId').value;
+      const body   = new URLSearchParams({ action: 'delete', taskId });
+      const res    = await fetch('/CtrlPlusSubmit/faculty/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      });
+      const json = await res.json();
+      document.getElementById('deleteModal').classList.add('hidden');
+      json.success ? (toast(json.message), loadTasks()) : toast(json.message, 'error');
+    }
+
+    // ── Close modal on overlay click ─────────────────────
+    document.getElementById('taskModal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+    document.getElementById('deleteModal').addEventListener('click', function (e) {
+      if (e.target === this) document.getElementById('deleteModal').classList.add('hidden');
+    });
+
+    // ── Init ─────────────────────────────────────────────
+    loadTasks();
+
+    // Pre-select batch if coming from dashboard "Assign Task" link
+    const urlParams = new URLSearchParams(window.location.search);
+    const preloadBatchId = urlParams.get('batchId');
+    if (preloadBatchId) {
+      // We'll open the modal with this batch pre-selected when modal opens
+      window._preloadBatchId = preloadBatchId;
+    }
+  </script>
+</body>
+</html>

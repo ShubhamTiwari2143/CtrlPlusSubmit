@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CtrlPlusSubmit — My Submissions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .sidebar-gradient{background:linear-gradient(160deg,#1e40af,#3b82f6,#6366f1);background-size:200% 200%;animation:gradientShift 8s ease infinite}
+    .nav-link{transition:all .2s}.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.18);border-radius:10px}
+    .card-hover{transition:transform .15s,box-shadow .15s}.card-hover:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar-gradient w-64 min-h-screen flex flex-col fixed left-0 top-0 z-30 shadow-xl">
+    <div class="px-6 py-6 border-b border-white border-opacity-20">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white bg-opacity-20 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg></div>
+        <div><p class="text-white font-bold text-base leading-tight">CtrlPlusSubmit</p><p class="text-blue-200 text-xs">Student Portal</p></div>
+      </div>
+    </div>
+    <nav class="flex-1 px-4 py-5 space-y-1">
+      <p class="text-blue-300 text-xs font-semibold uppercase tracking-wider px-3 mb-3">Menu</p>
+      <a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</a>
+      <a href="tasks.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Tasks</a>
+      <a href="submissions.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 text-white text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Submissions</a>
+      <a href="notifications.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>Notifications</a>
+    </nav>
+    <div class="px-4 py-5 border-t border-white border-opacity-20"><a href="/CtrlPlusSubmit/auth/logout" class="flex items-center gap-3 px-3 py-2.5 text-blue-200 text-sm font-medium rounded-xl hover:bg-white hover:bg-opacity-15 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Logout</a></div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="ml-64 flex-1 p-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">My Submissions</h1>
+      <p class="text-gray-500 text-sm mt-0.5">Track all your submitted assignments and faculty feedback</p>
+    </div>
+
+    <!-- Status tabs -->
+    <div class="flex gap-2 mb-5 flex-wrap">
+      <button onclick="filterSubs('')"          id="tab_all"   class="tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-500 text-white transition-all">All</button>
+      <button onclick="filterSubs('PENDING')"   id="tab_p"     class="tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all">Pending</button>
+      <button onclick="filterSubs('SUBMITTED')" id="tab_s"     class="tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all">Submitted</button>
+      <button onclick="filterSubs('APPROVED')"  id="tab_a"     class="tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all">Approved</button>
+      <button onclick="filterSubs('NEEDS_IMPROVEMENT')" id="tab_n" class="tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all">Needs Work</button>
+      <button onclick="filterSubs('REJECTED')"  id="tab_r"     class="tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all">Rejected</button>
+    </div>
+
+    <!-- Cards -->
+    <div id="subsGrid" class="space-y-4">
+      <div class="text-center py-16 text-gray-400">Loading submissions...</div>
+    </div>
+  </main>
+
+  <script>
+    let allSubs=[];
+    const statusStyle={PENDING:'bg-gray-100 text-gray-500',SUBMITTED:'bg-blue-100 text-blue-700',LATE:'bg-amber-100 text-amber-700',REVIEWED:'bg-indigo-100 text-indigo-700',APPROVED:'bg-green-100 text-green-700',NEEDS_IMPROVEMENT:'bg-yellow-100 text-yellow-700',REJECTED:'bg-red-100 text-red-600'};
+    const tabMap={'':{btn:'tab_all',label:'All'},'PENDING':{btn:'tab_p'},'SUBMITTED':{btn:'tab_s'},'APPROVED':{btn:'tab_a'},'NEEDS_IMPROVEMENT':{btn:'tab_n'},'REJECTED':{btn:'tab_r'}};
+
+    function esc(s){return(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function fmtDate(iso){if(!iso)return'—';try{return new Date(iso).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch{return iso;}}
+    function fmtBytes(kb){return kb<1024?kb+' KB':(kb/1024).toFixed(1)+' MB';}
+
+    async function load(){
+      const res=await fetch('/CtrlPlusSubmit/student/tasks'); // all tasks → cross-ref with submissions
+      const tRes=await res.json();
+      // Actually load submissions via StudentDashboard which gives all subs
+      // Better: use a dedicated endpoint from task-list + submission cross-reference
+      // We'll load all submissions from the dashboard endpoint
+      const dashRes=await fetch('/CtrlPlusSubmit/student/dashboard');
+      const dash=await dashRes.json();
+      if(!dash.success){window.location.href='/CtrlPlusSubmit/views/auth/login.html';return;}
+
+      // Load tasks to get full submission data by iterating
+      // The cleanest way: fetch all tasks (which includes submission status via DB join in future iterations)
+      // For now pull submissions list via dedicated path — use student/tasks which returns all assigned tasks
+      // We augment with submission data separately
+
+      // Simpler: show recent submissions from dashboard + link to task detail for each
+      // Load all assigned tasks and their submissions individually
+      const tasksJson = await (await fetch('/CtrlPlusSubmit/student/tasks')).json();
+      if(!tasksJson.success){return;}
+
+      // Load individual submission for each task
+      const tasks=tasksJson.data||[];
+      const submissions=[];
+      for(const t of tasks){
+        const sRes=await fetch('/CtrlPlusSubmit/student/submit?taskId='+t.id);
+        const sJson=await sRes.json();
+        if(sJson.success&&sJson.data){
+          sJson.data.taskTitle=t.title;
+          sJson.data.maxMarks=t.maxMarks;
+          sJson.data.facultyName=t.facultyName;
+          sJson.data.deadline=t.deadline;
+          submissions.push(sJson.data);
+        }
+      }
+
+      allSubs=submissions;
+      filterSubs('');
+    }
+
+    function filterSubs(status){
+      // Update tab styles
+      document.querySelectorAll('.tab-btn').forEach(b=>{
+        b.className='tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 transition-all';
+      });
+      const activeTab=tabMap[status]?.btn;
+      if(activeTab){
+        const el=document.getElementById(activeTab);
+        if(el)el.className='tab-btn px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-500 text-white transition-all';
+      }
+
+      const filtered=status?allSubs.filter(s=>s.status===status):allSubs;
+      renderCards(filtered);
+    }
+
+    function renderCards(subs){
+      const grid=document.getElementById('subsGrid');
+      const active=subs.filter(s=>s.status!=='PENDING');
+      const pending=subs.filter(s=>s.status==='PENDING');
+      const combined=[...active,...pending];
+
+      if(!combined.length){
+        grid.innerHTML=`<div class="text-center py-16 text-gray-400">No submissions found in this category.</div>`;return;
+      }
+
+      grid.innerHTML=combined.map(s=>`
+        <div class="card-hover bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="flex items-start gap-4 p-5">
+            <!-- Status strip -->
+            <div class="w-1 self-stretch rounded-full flex-shrink-0 ${s.status==='APPROVED'?'bg-green-400':s.status==='REJECTED'?'bg-red-400':s.status==='NEEDS_IMPROVEMENT'?'bg-yellow-400':s.status==='SUBMITTED'||s.status==='LATE'?'bg-blue-400':'bg-gray-200'}"></div>
+
+            <div class="flex-1 min-w-0">
+              <!-- Header -->
+              <div class="flex items-start justify-between flex-wrap gap-2 mb-2">
+                <div>
+                  <h3 class="font-bold text-gray-800 text-sm">${esc(s.taskTitle||'—')}</h3>
+                  <p class="text-xs text-gray-400 mt-0.5">By ${esc(s.facultyName||'—')}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  ${s.marks!=null?`<span class="text-sm font-bold text-gray-700">${s.marks} / ${s.maxMarks||100}</span>`:''}
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-semibold ${statusStyle[s.status]||'bg-gray-100 text-gray-500'}">${s.status}</span>
+                </div>
+              </div>
+
+              <!-- File info -->
+              ${s.filePath?`
+              <div class="flex items-center gap-2 mb-2">
+                <a href="/CtrlPlusSubmit/faculty/download?file=${encodeURIComponent(s.filePath)}&name=${encodeURIComponent(s.fileName||'submission')}"
+                   target="_blank"
+                   class="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-medium">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  ${esc(s.fileName||'file')}
+                </a>
+                <span class="text-xs text-gray-300">·</span>
+                <span class="text-xs text-gray-400">${fmtBytes(s.fileSizeKB||0)}</span>
+                <span class="text-xs text-gray-300">·</span>
+                <span class="text-xs text-gray-400">Submitted ${fmtDate(s.submittedAt)}</span>
+                ${s.resubmitCount>0?`<span class="text-xs text-gray-300">·</span><span class="text-xs text-gray-400">${s.resubmitCount} resubmit(s)</span>`:''}
+              </div>`:''}
+
+              <!-- Student comment -->
+              ${s.comments?`<p class="text-xs text-gray-500 bg-gray-50 rounded-lg px-3 py-2 mb-2">💬 "${esc(s.comments)}"</p>`:''}
+
+              <!-- Faculty remarks -->
+              ${s.facultyRemarks?`
+              <div class="bg-indigo-50 border border-indigo-100 rounded-xl px-3 py-2 mb-2">
+                <p class="text-xs font-semibold text-indigo-500 mb-0.5">Faculty feedback</p>
+                <p class="text-xs text-indigo-800">${esc(s.facultyRemarks)}</p>
+              </div>`:''}
+
+              <!-- Actions -->
+              <div class="flex items-center gap-2 mt-3">
+                <a href="task-detail.html?taskId=${s.taskId}"
+                   class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors">
+                  View Task
+                </a>
+                ${['SUBMITTED','LATE','NEEDS_IMPROVEMENT'].includes(s.status)?`
+                <a href="submit.html?taskId=${s.taskId}&action=resubmit"
+                   class="px-3 py-1.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-lg hover:bg-amber-200 transition-colors">
+                  Resubmit
+                </a>`:''}
+                ${s.status==='PENDING'?`
+                <a href="submit.html?taskId=${s.taskId}"
+                   class="px-3 py-1.5 bg-blue-500 text-white text-xs font-semibold rounded-lg hover:bg-blue-600 transition-colors">
+                  Submit Now
+                </a>`:''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    load();
+  </script>
+</body>
+</html>

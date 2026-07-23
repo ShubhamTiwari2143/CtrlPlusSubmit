@@ -1,0 +1,133 @@
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>CtrlPlusSubmit</display-name>
+    <description>Task Assignment and Submission Management System</description>
+
+    <!-- =========================================================
+         GLOBAL CONTEXT PARAMETERS
+         Accessible in any Servlet via:
+             getServletContext().getInitParameter("PARAM_NAME")
+    ========================================================= -->
+
+    <!-- Root directory for all uploaded files.
+         Change this path to match your local machine.
+         Windows : C:/taskflow-uploads
+         Linux   : /var/taskflow-uploads
+         Mac     : /Users/yourname/taskflow-uploads  -->
+    <context-param>
+        <param-name>UPLOAD_DIR</param-name>
+        <param-value>C:/taskflow-uploads</param-value>
+    </context-param>
+
+    <!-- Max file size (bytes) shown in validation messages: 20 MB -->
+    <context-param>
+        <param-name>MAX_FILE_SIZE_MB</param-name>
+        <param-value>20</param-value>
+    </context-param>
+
+    <!-- App name used in notification emails (future use) -->
+    <context-param>
+        <param-name>APP_NAME</param-name>
+        <param-value>CtrlPlusSubmit</param-value>
+    </context-param>
+
+    <!-- =========================================================
+         WELCOME FILE — root URL redirects here
+    ========================================================= -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <!-- =========================================================
+         SESSION CONFIGURATION
+         - Tracking via Cookie only (most secure)
+         - HttpOnly: JS cannot access session cookie (XSS protection)
+         - Session timeout: 0 = never expire until logout
+    ========================================================= -->
+    <session-config>
+        <!-- Session timeout in minutes. 0 = never timeout (logout only) -->
+        <session-timeout>0</session-timeout>
+        <cookie-config>
+            <!-- Cookie name shown in browser DevTools -->
+            <name>TASKFLOW_SESSION</name>
+            <!-- Prevents JavaScript from accessing the session cookie -->
+            <http-only>true</http-only>
+            <!-- Set to true if using HTTPS in production -->
+            <secure>false</secure>
+        </cookie-config>
+        <!-- Only track sessions via cookies, not URL rewriting (?jsessionid=...) -->
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <!-- =========================================================
+         ERROR PAGES
+         Maps HTTP error codes and Java exceptions to friendly HTML pages.
+    ========================================================= -->
+
+    <!-- 403 Forbidden — wrong role -->
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error/403.html</location>
+    </error-page>
+
+    <!-- 404 Not Found -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404.html</location>
+    </error-page>
+
+    <!-- 500 Internal Server Error -->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error/500.html</location>
+    </error-page>
+
+    <!-- Catch-all for uncaught Java exceptions -->
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/error/500.html</location>
+    </error-page>
+
+    <!-- =========================================================
+         MIME TYPES — ensures correct Content-Type for downloads
+    ========================================================= -->
+    <mime-mapping>
+        <extension>pdf</extension>
+        <mime-type>application/pdf</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>zip</extension>
+        <mime-type>application/zip</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>docx</extension>
+        <mime-type>application/vnd.openxmlformats-officedocument.wordprocessingml.document</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>doc</extension>
+        <mime-type>application/msword</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jpg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jpeg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>png</extension>
+        <mime-type>image/png</mime-type>
+    </mime-mapping>
+    
+    <listener>
+		<listener-class>in.ctrlplussubmit.util.AppInitializer</listener-class>
+	</listener>
+    
+
+
+</web-app>

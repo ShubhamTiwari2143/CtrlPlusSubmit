@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CtrlPlusSubmit — User Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    .sidebar-gradient { background:linear-gradient(160deg,#4f46e5,#7c3aed,#9333ea);background-size:200% 200%;animation:gradientShift 8s ease infinite; }
+    .nav-link { transition:all .2s ease; }
+    .nav-link:hover,.nav-link.active { background:rgba(255,255,255,.18);border-radius:10px; }
+    .modal-overlay { background:rgba(0,0,0,0.45); }
+    .toast-enter { animation: toastIn 0.3s ease; }
+    @keyframes toastIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+    .input-field:focus { outline:none;border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex">
+
+  <!-- ===== SIDEBAR (same as dashboard) ===== -->
+  <aside class="sidebar-gradient w-64 min-h-screen flex flex-col fixed left-0 top-0 z-30 shadow-xl">
+    <div class="px-6 py-6 border-b border-white border-opacity-20">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+        </div>
+        <div><p class="text-white font-bold text-base leading-tight">CtrlPlusSubmit</p><p class="text-purple-200 text-xs">Admin Panel</p></div>
+      </div>
+    </div>
+    <nav class="flex-1 px-4 py-5 space-y-1">
+      <p class="text-purple-300 text-xs font-semibold uppercase tracking-wider px-3 mb-3">Menu</p>
+      <a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-purple-100 text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <a href="users.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 text-white text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        User Management
+      </a>
+      <a href="batches.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-purple-100 text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        Batches
+      </a>
+      <a href="account-requests.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-purple-100 text-sm font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+        Account Requests
+      </a>
+    </nav>
+    <div class="px-4 py-5 border-t border-white border-opacity-20">
+      <a href="/CtrlPlusSubmit/auth/logout" class="flex items-center gap-3 px-3 py-2.5 text-purple-200 text-sm font-medium rounded-xl hover:bg-white hover:bg-opacity-15 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="ml-64 flex-1 p-8">
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 toast-enter"></div>
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">User Management</h1>
+        <p class="text-gray-500 text-sm mt-0.5">Create, edit, and manage all user accounts</p>
+      </div>
+      <button onclick="openCreateModal()"
+              class="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600
+                     text-white text-sm font-semibold rounded-xl hover:from-indigo-600 hover:to-purple-700
+                     transition-all shadow-md active:scale-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Add User
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-5 flex flex-wrap gap-3 items-center">
+      <div class="relative flex-1 min-w-48">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search by name or email..."
+               class="input-field w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50"
+               oninput="debounceSearch(this.value)"/>
+      </div>
+      <select id="roleFilter" onchange="applyFilter()"
+              class="input-field px-3 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-700">
+        <option value="">All roles</option>
+        <option value="STUDENT">Student</option>
+        <option value="FACULTY">Faculty</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-100">
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">User</th>
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Role</th>
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Status</th>
+              <th class="text-left px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Created</th>
+              <th class="text-right px-5 py-3.5 text-gray-500 font-semibold text-xs uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="5" class="text-center py-10 text-gray-400">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== CREATE USER MODAL ===== -->
+  <div id="createModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-bold text-gray-800">Create New User</h3>
+        <button onclick="closeModal('createModal')" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Full Name</label>
+          <input type="text" id="c_fullName" placeholder="e.g. Shubham Tiwari"
+                 class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+          <input type="email" id="c_email" placeholder="user@example.com"
+                 class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Temporary Password</label>
+          <input type="password" id="c_password" placeholder="Min. 6 characters"
+                 class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Role</label>
+          <select id="c_role" class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50">
+            <option value="">Select role</option>
+            <option value="STUDENT">Student</option>
+            <option value="FACULTY">Faculty</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeModal('createModal')"
+                class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium hover:bg-gray-50">
+          Cancel
+        </button>
+        <button onclick="createUser()"
+                class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600
+                       text-white text-sm font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all">
+          Create User
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EDIT USER MODAL ===== -->
+  <div id="editModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-bold text-gray-800">Edit User</h3>
+        <button onclick="closeModal('editModal')" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <input type="hidden" id="e_userId"/>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Full Name</label>
+          <input type="text" id="e_fullName"
+                 class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+          <input type="email" id="e_email"
+                 class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">New Password (leave blank to keep)</label>
+          <input type="password" id="e_password" placeholder="Enter new password to reset"
+                 class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50"/>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeModal('editModal')"
+                class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 font-medium hover:bg-gray-50">
+          Cancel
+        </button>
+        <button onclick="updateUser()"
+                class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600
+                       text-white text-sm font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allUsers = [];
+    let searchTimer = null;
+
+    // ---- Toast ----
+    function toast(msg, type = 'success') {
+      const el = document.getElementById('toast');
+      el.className = `fixed top-5 right-5 z-50 px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 toast-enter
+        ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`;
+      el.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3500);
+    }
+
+    // ---- Modal ----
+    function openCreateModal() {
+      document.getElementById('c_fullName').value = '';
+      document.getElementById('c_email').value = '';
+      document.getElementById('c_password').value = '';
+      document.getElementById('c_role').value = '';
+      document.getElementById('createModal').classList.remove('hidden');
+    }
+    function openEditModal(user) {
+      document.getElementById('e_userId').value  = user.id;
+      document.getElementById('e_fullName').value = user.fullName;
+      document.getElementById('e_email').value    = user.email;
+      document.getElementById('e_password').value = '';
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ---- Load users ----
+    async function loadUsers(params = '') {
+      try {
+        const res  = await fetch('/CtrlPlusSubmit/admin/users' + (params ? '?' + params : ''));
+        const json = await res.json();
+        if (!json.success) { window.location.href = '/CtrlPlusSubmit/views/auth/login.html'; return; }
+        allUsers = json.data;
+        renderTable(allUsers);
+      } catch (e) { console.error(e); }
+    }
+
+    function renderTable(users) {
+      const tbody = document.getElementById('usersTableBody');
+      if (!users.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-gray-400">No users found.</td></tr>`;
+        return;
+      }
+
+      const roleBadge = { ADMIN:'bg-purple-100 text-purple-700', FACULTY:'bg-blue-100 text-blue-700', STUDENT:'bg-green-100 text-green-700' };
+
+      tbody.innerHTML = users.map(u => `
+        <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500
+                          flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                ${u.fullName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p class="font-semibold text-gray-800 text-sm">${esc(u.fullName)}</p>
+                <p class="text-gray-400 text-xs">${esc(u.email)}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-5 py-4">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-semibold ${roleBadge[u.role] || 'bg-gray-100 text-gray-600'}">
+              ${u.role}
+            </span>
+          </td>
+          <td class="px-5 py-4">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold
+              ${u.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'}">
+              <span class="w-1.5 h-1.5 rounded-full ${u.isActive ? 'bg-emerald-500' : 'bg-red-400'}"></span>
+              ${u.isActive ? 'Active' : 'Inactive'}
+            </span>
+          </td>
+          <td class="px-5 py-4 text-gray-500 text-xs">${formatDate(u.createdAt)}</td>
+          <td class="px-5 py-4">
+            <div class="flex items-center justify-end gap-2">
+              <button onclick='openEditModal(${JSON.stringify(u)})'
+                      class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </button>
+              <button onclick="toggleUser(${u.id}, ${!u.isActive})"
+                      class="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                      title="${u.isActive ? 'Deactivate' : 'Activate'}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ---- Create ----
+    async function createUser() {
+      const body = new URLSearchParams({
+        fullName: document.getElementById('c_fullName').value.trim(),
+        email:    document.getElementById('c_email').value.trim(),
+        password: document.getElementById('c_password').value,
+        role:     document.getElementById('c_role').value
+      });
+      const res  = await fetch('/CtrlPlusSubmit/admin/users', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+      const json = await res.json();
+      if (json.success) { closeModal('createModal'); toast(json.message); loadUsers(); }
+      else toast(json.message, 'error');
+    }
+
+    // ---- Update ----
+    async function updateUser() {
+      const userId   = document.getElementById('e_userId').value;
+      const newPwd   = document.getElementById('e_password').value;
+      const body = new URLSearchParams({
+        action: 'update', userId,
+        fullName: document.getElementById('e_fullName').value.trim(),
+        email:    document.getElementById('e_email').value.trim()
+      });
+      const res  = await fetch('/CtrlPlusSubmit/admin/users', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+      const json = await res.json();
+      if (!json.success) { toast(json.message, 'error'); return; }
+
+      // Also reset password if provided
+      if (newPwd.trim()) {
+        const pwdBody = new URLSearchParams({ action:'resetPwd', userId, newPassword: newPwd });
+        await fetch('/CtrlPlusSubmit/admin/users', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: pwdBody });
+      }
+
+      closeModal('editModal'); toast('User updated successfully.'); loadUsers();
+    }
+
+    // ---- Toggle ----
+    async function toggleUser(userId, activate) {
+      const body = new URLSearchParams({ action:'toggle', userId, isActive: activate });
+      const res  = await fetch('/CtrlPlusSubmit/admin/users', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+      const json = await res.json();
+      json.success ? (toast(json.message), loadUsers()) : toast(json.message, 'error');
+    }
+
+    // ---- Search & Filter ----
+    function debounceSearch(val) {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        const role = document.getElementById('roleFilter').value;
+        const params = new URLSearchParams();
+        if (val.trim()) params.set('search', val.trim());
+        else if (role)  params.set('role', role);
+        loadUsers(params.toString());
+      }, 350);
+    }
+
+    function applyFilter() {
+      const role   = document.getElementById('roleFilter').value;
+      const search = document.getElementById('searchInput').value.trim();
+      const params = new URLSearchParams();
+      if (search) params.set('search', search);
+      else if (role) params.set('role', role);
+      loadUsers(params.toString());
+    }
+
+    // ---- Helpers ----
+    function esc(s) { return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function formatDate(iso) { if (!iso) return '—'; try { return new Date(iso).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); } catch { return iso; } }
+
+    loadUsers();
+  </script>
+</body>
+</html>

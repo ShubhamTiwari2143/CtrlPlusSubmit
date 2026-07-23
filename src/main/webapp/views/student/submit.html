@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CtrlPlusSubmit — Submit Assignment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .sidebar-gradient{background:linear-gradient(160deg,#1e40af,#3b82f6,#6366f1);background-size:200% 200%;animation:gradientShift 8s ease infinite}
+    .nav-link{transition:all .2s}.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.18);border-radius:10px}
+    .input-field:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+    .drop-zone{transition:border-color .2s,background .2s}
+    .drop-zone.drag-over{border-color:#3b82f6;background:#eff6ff}
+    @keyframes successPop{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+    .success-pop{animation:successPop .5s ease forwards}
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar-gradient w-64 min-h-screen flex flex-col fixed left-0 top-0 z-30 shadow-xl">
+    <div class="px-6 py-6 border-b border-white border-opacity-20">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white bg-opacity-20 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg></div>
+        <div><p class="text-white font-bold text-base leading-tight">CtrlPlusSubmit</p><p class="text-blue-200 text-xs">Student Portal</p></div>
+      </div>
+    </div>
+    <nav class="flex-1 px-4 py-5 space-y-1">
+      <p class="text-blue-300 text-xs font-semibold uppercase tracking-wider px-3 mb-3">Menu</p>
+      <a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Dashboard</a>
+      <a href="tasks.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 text-white text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Tasks</a>
+      <a href="submissions.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Submissions</a>
+      <a href="notifications.html" class="nav-link flex items-center gap-3 px-3 py-2.5 text-blue-100 text-sm font-medium"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>Notifications</a>
+    </nav>
+    <div class="px-4 py-5 border-t border-white border-opacity-20"><a href="/CtrlPlusSubmit/auth/logout" class="flex items-center gap-3 px-3 py-2.5 text-blue-200 text-sm font-medium rounded-xl hover:bg-white hover:bg-opacity-15 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Logout</a></div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="ml-64 flex-1 p-8 max-w-2xl">
+
+    <a href="tasks.html" class="inline-flex items-center gap-1.5 text-sm text-blue-500 hover:text-blue-700 font-medium mb-6 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Back to tasks
+    </a>
+
+    <!-- Loading -->
+    <div id="loadingState" class="text-center py-16 text-gray-400">Loading...</div>
+
+    <!-- Main form card -->
+    <div id="formState" class="hidden">
+
+      <!-- Task info banner -->
+      <div id="taskBanner" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
+        <div class="flex items-start justify-between flex-wrap gap-2">
+          <div>
+            <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Submitting for</p>
+            <h2 class="text-base font-bold text-gray-800" id="b_title">—</h2>
+            <p class="text-xs text-gray-500 mt-1" id="b_meta">—</p>
+          </div>
+          <span id="b_deadlineChip" class="px-3 py-1 rounded-xl text-xs font-bold"></span>
+        </div>
+      </div>
+
+      <!-- Previous submission info (shown on resubmit) -->
+      <div id="prevSubBlock" class="hidden bg-amber-50 border border-amber-100 rounded-2xl p-4 mb-5">
+        <p class="text-xs font-semibold text-amber-600 mb-1">Current submission</p>
+        <p class="text-sm text-amber-800" id="prevSubInfo"></p>
+        <p class="text-xs text-amber-500 mt-1" id="replaceWarn">Uploading a new file will replace the existing submission.</p>
+      </div>
+
+      <!-- Error banner -->
+      <div id="errorBanner" class="hidden bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4 text-sm text-red-600 font-medium flex items-center gap-2">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span id="errorMsg"></span>
+      </div>
+
+      <!-- Upload form -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-base font-bold text-gray-800 mb-5" id="formHeading">Submit Assignment</h3>
+
+        <!-- Locked State (Visible only if Graded) -->
+        <div id="lockedState" class="hidden bg-gray-50 border border-gray-200 rounded-2xl p-8 text-center">
+          <svg class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <p class="text-sm font-semibold text-gray-600">This submission has been graded and is locked.</p>
+          <p class="text-xs text-gray-500 mt-1">You can no longer modify or resubmit this file.</p>
+        </div>
+
+        <!-- Drag & Drop zone -->
+        <div id="dropZone"
+             class="drop-zone border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center mb-5 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all"
+             onclick="document.getElementById('fileInput').click()"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event)">
+          <div id="dropIcon">
+            <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            <p class="text-sm font-semibold text-gray-500">Drag & drop your file here</p>
+            <p class="text-xs text-gray-400 mt-1">or click to browse</p>
+            <p class="text-xs text-gray-300 mt-2">Accepted: PDF, DOC, DOCX, ZIP, JPG, PNG · Max 20 MB</p>
+          </div>
+          <div id="fileSelected" class="hidden">
+            <svg class="w-8 h-8 text-blue-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <p class="text-sm font-bold text-blue-700" id="selectedFileName">file.pdf</p>
+            <p class="text-xs text-gray-400 mt-1" id="selectedFileSize"></p>
+            <button class="mt-2 text-xs text-red-400 hover:text-red-600" onclick="clearFile(event)">Remove</button>
+          </div>
+          <input type="file" id="fileInput" class="hidden"
+                 accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png"
+                 onchange="handleFileSelect(this.files[0])"/>
+        </div>
+
+        <!-- Comment textarea -->
+        <div id="commentSection" class="mb-5">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Comment (optional)</label>
+          <textarea id="commentsInput" rows="3"
+                    placeholder="Add a note for your faculty — e.g. 'All 3 questions answered, used Python 3.11'"
+                    class="input-field w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 resize-none"></textarea>
+        </div>
+
+        <!-- Submit button -->
+        <button id="submitBtn" onclick="uploadSubmission()"
+                class="w-full py-3 rounded-xl text-white text-sm font-bold
+                       bg-gradient-to-r from-blue-500 to-indigo-600
+                       hover:from-blue-600 hover:to-indigo-700
+                       active:scale-95 transition-all shadow-md
+                       flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span id="submitBtnText">Submit Assignment</span>
+          <svg id="submitBtnSpinner" class="hidden animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div id="successState" class="hidden text-center py-12 success-pop">
+      <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+        <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h2 class="text-xl font-bold text-gray-800 mb-2" id="successTitle">Submitted!</h2>
+      <p class="text-gray-500 text-sm mb-6" id="successMsg">Your assignment has been submitted.</p>
+      <div class="flex gap-3 justify-center">
+        <a href="tasks.html" class="px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">Back to Tasks</a>
+        <a id="viewDetailLink" href="#" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-all">View Task Detail</a>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const params   = new URLSearchParams(window.location.search);
+    const taskId   = params.get('taskId');
+    const isResub  = params.get('action') === 'resubmit';
+    let   selectedFile = null;
+
+    function esc(s){return(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function fmtDate(iso){if(!iso)return'—';try{const d=new Date(iso);return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}catch{return iso;}}
+    function fmtBytes(kb){return kb<1024?kb+' KB':(kb/1024).toFixed(1)+' MB';}
+
+    function show(id){['loadingState','formState','successState'].forEach(i=>document.getElementById(i).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
+    function showError(msg){const el=document.getElementById('errorBanner');el.classList.remove('hidden');document.getElementById('errorMsg').textContent=msg;}
+    function hideError(){document.getElementById('errorBanner').classList.add('hidden');}
+
+    async function load(){
+      if(!taskId){show('formState');showError('No task ID provided.');return;}
+      const res=await fetch('/CtrlPlusSubmit/student/tasks?taskId='+taskId);
+      const json=await res.json();
+      if(!json.success){show('formState');showError(json.message||'Task not found.');return;}
+
+      const task=json.data.task;
+      const sub=json.data.submission;
+
+      // Fill banner
+      document.getElementById('b_title').textContent=task.title||'—';
+      document.getElementById('b_meta').textContent=`By ${esc(task.facultyName||'—')} · Max ${task.maxMarks||100} marks · Due ${fmtDate(task.deadline)}`;
+      const dlChip=document.getElementById('b_deadlineChip');
+      const dlColors={UPCOMING:'bg-blue-100 text-blue-700',TODAY:'bg-amber-100 text-amber-700',OVERDUE:'bg-red-100 text-red-600'};
+      dlChip.className='px-3 py-1 rounded-xl text-xs font-bold '+(dlColors[task.deadlineStatus]||'bg-gray-100 text-gray-500');
+      dlChip.textContent=task.deadlineStatus||'—';
+
+      // Previous submission & Locking Logic
+      if(sub && sub.filePath){
+        document.getElementById('prevSubInfo').textContent=`${sub.fileName||'file'} (${fmtBytes(sub.fileSizeKB||0)}) submitted on ${fmtDate(sub.submittedAt)}`;
+        document.getElementById('prevSubBlock').classList.remove('hidden');
+
+        // SECURITY FIX: Lock the form if already graded
+        if(sub.status === 'APPROVED' || sub.status === 'REVIEWED' || sub.status === 'REJECTED'){
+            document.getElementById('dropZone').classList.add('hidden');
+            document.getElementById('commentSection').classList.add('hidden');
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('lockedState').classList.remove('hidden');
+            document.getElementById('replaceWarn').classList.add('hidden'); // Hide replace warning
+        }
+      }
+
+      // Update heading & button for resubmit
+      if(isResub){
+        document.getElementById('formHeading').textContent='Resubmit Assignment';
+        document.getElementById('submitBtnText').textContent='Resubmit Assignment';
+        document.getElementById('submitBtn').className=document.getElementById('submitBtn').className.replace('from-blue-500 to-indigo-600','from-amber-400 to-orange-500').replace('hover:from-blue-600 hover:to-indigo-700','hover:from-amber-500 hover:to-orange-600');
+      }
+
+      document.getElementById('viewDetailLink').href='task-detail.html?taskId='+taskId;
+      show('formState');
+    }
+
+    // ---- File handling ----
+    function handleFileSelect(file){
+      if(!file)return;
+      selectedFile=file;
+      document.getElementById('selectedFileName').textContent=file.name;
+      document.getElementById('selectedFileSize').textContent=fmtBytes(Math.round(file.size/1024));
+      document.getElementById('dropIcon').classList.add('hidden');
+      document.getElementById('fileSelected').classList.remove('hidden');
+      hideError();
+    }
+    function clearFile(e){e.stopPropagation();selectedFile=null;document.getElementById('fileInput').value='';document.getElementById('dropIcon').classList.remove('hidden');document.getElementById('fileSelected').classList.add('hidden');}
+    function handleDragOver(e){e.preventDefault();document.getElementById('dropZone').classList.add('drag-over');}
+    function handleDragLeave(){document.getElementById('dropZone').classList.remove('drag-over');}
+    function handleDrop(e){e.preventDefault();handleDragLeave();const f=e.dataTransfer.files[0];if(f)handleFileSelect(f);}
+
+    // ---- Submit ----
+    async function uploadSubmission(){
+      hideError();
+      if(!selectedFile){showError('Please select a file before submitting.');return;}
+
+      const maxBytes=20*1024*1024;
+      if(selectedFile.size>maxBytes){showError('File is too large. Maximum allowed size is 20 MB.');return;}
+
+      const btn=document.getElementById('submitBtn');
+      const btnText=document.getElementById('submitBtnText');
+      const spinner=document.getElementById('submitBtnSpinner');
+      btn.disabled=true;
+      btnText.textContent='Uploading...';
+      spinner.classList.remove('hidden');
+
+      const fd=new FormData();
+      fd.append('taskId',taskId);
+      fd.append('comments',document.getElementById('commentsInput').value.trim());
+      fd.append('submissionFile',selectedFile);
+      if(isResub)fd.append('action','resubmit');
+
+      try{
+        const res=await fetch('/CtrlPlusSubmit/student/submit',{method:'POST',body:fd});
+        const json=await res.json();
+
+        if(json.success){
+          document.getElementById('successTitle').textContent=isResub?'Resubmitted!':'Submitted!';
+          document.getElementById('successMsg').textContent=json.message;
+          show('successState');
+        } else {
+          showError(json.message||'Submission failed. Please try again.');
+        }
+      }catch(e){showError('Network error. Please check your connection.');}
+      finally{
+        btn.disabled=false;
+        btnText.textContent=isResub?'Resubmit Assignment':'Submit Assignment';
+        spinner.classList.add('hidden');
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
