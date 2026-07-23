@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y curl && \
 
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
-COPY CtrlPlusSubmit.war /usr/local/tomcat/webapps/ROOT.war
+COPY Root1.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
 
