@@ -20,7 +20,7 @@
          Mac     : /Users/yourname/taskflow-uploads  -->
     <context-param>
         <param-name>UPLOAD_DIR</param-name>
-        <param-value>C:/taskflow-uploads</param-value>
+       <param-value>/tmp/taskflow-uploads</param-value>
     </context-param>
 
     <!-- Max file size (bytes) shown in validation messages: 20 MB -->
