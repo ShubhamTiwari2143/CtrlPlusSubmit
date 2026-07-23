@@ -10,9 +10,9 @@ public class AppInitializer implements ServletContextListener {
 
         ServletContext sc = sce.getServletContext();
 
-        String url = "jdbc:mysql://localhost:3306/ctrl_plus_submit";
+        String url = "jdbc:mysql://sakura.proxy.rlwy.net:38693/railway";
         String username = "root";
-        String password = "Mystudents";
+        String password = "uNqqJdooljjJmMRQPVEnPMctYdFsVnwf";
         
         System.out.println("DB URL = " + url);
         System.out.println("DB USER = " + username);
