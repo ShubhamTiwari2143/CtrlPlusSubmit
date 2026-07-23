@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y curl && \
     tar -xvf apache-tomcat-10.1.54.tar.gz --strip-components=1 && \
     rm apache-tomcat-10.1.54.tar.gz
 
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
+RUN rm -rf /usr/local/tomcat/webapps/*
 
 COPY Root.war /usr/local/tomcat/webapps/ROOT.war
 
